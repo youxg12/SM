@@ -1,4 +1,4 @@
-#include <windows.h>
+#include <stdio.h>
 
 int main(viod){
 	int input_int;
