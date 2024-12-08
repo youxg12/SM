@@ -51,7 +51,7 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=main.1.c
+FileName=shark.dev
 CompileCpp=1
 Folder=
 Compile=1
