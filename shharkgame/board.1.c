@@ -3,7 +3,7 @@
 //  sharkGame
 //
 
-#include "board.h"
+#include "board.1.h"
 
 static int board_coin[N_BOARD];        // Coin status of each board space
 static int board_status[N_BOARD];      // status of board (0: 정상, 1: 파손)
