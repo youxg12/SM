@@ -2,7 +2,7 @@
 //  cal_healthdata.h
 //  Excercise for Calorie Diary
 //
-//  Created by Eunju Cha
+//  Created by Hayoung Lee
 //
 
 #ifndef cal_healthdata_h
