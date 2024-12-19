@@ -13,55 +13,52 @@
 #include "cal_diets.h"
 #include "cal_healthdata.h"
 
-#define MAX_DIETS 100       			// Maximum number of diets
-#define MAX_FOOD_NAME_LEN 50		// Maximum length of the name of food
+#define MAX_DIETS 100               // Maximum number of diets
+#define MAX_FOOD_NAME_LEN 50        // Maximum length of the name of food
 
-// list of diets 
+// List of diets
 static Diet diet_list[MAX_DIETS];
 static int diet_list_size = 0;
 
 /*
-    description : read the information in "diets.txt"
+    description: read the information in "diets.txt"
 */
-
 void loadDiets(const char* DIETFILEPATH) {
     FILE *file = fopen(DIETFILEPATH, "r");
     if (file == NULL) {
-        printf("There is no file for diets! \n");
+        printf("[Error] Failed to open the file '%s'. Ensure the file exists.\n", DIETFILEPATH);
         return;
     }
 
-    while (fscanf(file, "%49s %d", diet_list[diet_list_size].name, &diet_list[diet_list_size].calories) == 2) {
+    while (fscanf(file, "%49s %d", diet_list[diet_list_size].food_name, &diet_list[diet_list_size].calories_intake) == 2) {
         diet_list_size++;
         if (diet_list_size >= MAX_DIETS) {
+            printf("[Warning] Maximum number of diets (%d) reached. Some diets were not loaded.\n", MAX_DIETS);
             break;
         }
     }
 
     fclose(file);
+    printf("[Info] Successfully loaded %d diets from '%s'.\n", diet_list_size, DIETFILEPATH);
 }
 
 /*
-    description : to enter the selected diet and the total calories intake in the health data
-    input parameters : health_data - data object to which the selected diet and its calories are added 
-    return value : No
-    
-    operation : 1. provide the options for the diets to be selected
-    			2. enter the selected diet and the total calories intake in the health data
+    description: enter the selected diet and the total calories intake in the health data
+    input parameters: health_data - data object to which the selected diet and its calories are added 
+    return value: None
 */
-
 void inputDiet(HealthData* health_data) {
     if (diet_list_size == 0) {
-        printf("No diets available. Please load diets first.\n");
+        printf("[Error] No diets available. Please load diets first.\n");
         return;
     }
 
-    int choice, i;
+    int choice;
 
     // Display the list of available diets
-    printf("The list of diets:\n");
-    for (i = 0; i < diet_list_size; i++) {
-        printf("%d. %s (%d calories)\n", i + 1, diet_list[i].name, diet_list[i].calories);
+    printf("\nAvailable diets:\n");
+    for (int i = 0; i < diet_list_size; i++) {
+        printf("%d. %s (%d calories)\n", i + 1, diet_list[i].food_name, diet_list[i].calories_intake);
     }
     printf("0. Exit\n");
 
@@ -69,8 +66,8 @@ void inputDiet(HealthData* health_data) {
     while (1) {
         printf("Select a diet by entering the corresponding number: ");
         if (scanf("%d", &choice) != 1 || choice < 0 || choice > diet_list_size) {
-            printf("Invalid choice. Try again.\n");
-            while (getchar() != '\n'); // clear the input buffer
+            printf("[Error] Invalid choice. Please enter a number between 0 and %d.\n", diet_list_size);
+            while (getchar() != '\n'); // Clear the input buffer
             continue;
         }
 
@@ -80,10 +77,21 @@ void inputDiet(HealthData* health_data) {
         }
 
         // Add the selected diet to health data
-        strcpy(health_data->diet_name, diet_list[choice - 1].name);
-        health_data->calories += diet_list[choice - 1].calories;
+        if (health_data->diet_count >= MAX_DIETS) {
+            printf("[Error] Cannot add more diets. Maximum limit reached.\n");
+            return;
+        }
 
-        printf("You selected: %s (%d calories).\n", diet_list[choice - 1].name, diet_list[choice - 1].calories);
+        // Copy the selected diet's data to health_data
+        strncpy(health_data->diet[health_data->diet_count].food_name, diet_list[choice - 1].food_name, MAX_FOOD_NAME_LEN - 1);
+        health_data->diet[health_data->diet_count].food_name[MAX_FOOD_NAME_LEN - 1] = '\0'; // Ensure null termination
+        health_data->diet[health_data->diet_count].calories_intake = diet_list[choice - 1].calories_intake;
+
+        // Update health data
+        health_data->diet_count++;
+        health_data->total_calories_intake += diet_list[choice - 1].calories_intake;
+
+        printf("You selected: %s (%d calories).\n", diet_list[choice - 1].food_name, diet_list[choice - 1].calories_intake);
         break;
     }
 }
