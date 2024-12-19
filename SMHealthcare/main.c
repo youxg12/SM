@@ -13,7 +13,6 @@
 #include "cal_diets.h"
 #include "cal_healthdata.h"
 
-// 함수 선언 추가
 void inputExercise(HealthData* health_data);
 void inputDiet(HealthData* health_data);
 
@@ -46,25 +45,21 @@ int main() {
 
         switch (choice) {
             case 1:
-                // Handle exercise input
                 printf("[Exercise Mode]\n");
                 inputExercise(&health_data);
                 break;        
 
             case 2:
-                // Handle diet input
                 printf("[Diet Mode]\n");
                 inputDiet(&health_data);
                 break;
 
             case 3:
-                // Show logged information
                 printf("[Health Data Overview]\n");
                 printHealthData(&health_data);
                 break;
 
             case 4:
-                // Exit the system
                 printf("Exiting the system. Have a healthy day!\n");
                 printf("=======================================================================\n");
                 break;
